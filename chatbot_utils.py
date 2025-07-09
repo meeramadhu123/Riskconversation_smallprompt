@@ -258,48 +258,27 @@ def question_reframer(selected_docs,user_question,llm):
         selected_metadata_str += doc.page_content + "\n\n"
      
     # Function to reformulate questions using llm
-    question_prompt = PromptTemplate(template="""You are a data analysis assistant tasked with reformulating a user's question for later SQL query generation. Your goal is to produce a clear, unambiguous question that:
-    - Accurately reflects the user's intent.
-    - Uses the exact table names and column names as provided in the metadata.
-    - Specifies the correct column-to-table relationships without hallucinating.
-    - Clearly outlines any necessary joins, filtering, grouping, or ordering, using the correct table aliases.
-    
-    Below is the detailed metadata for the selected tables:
-    {selected_metadata}
-    
-    Please follow these instructions precisely:
-    1. **Understand the User's Intent:** Analyze the user's question carefully to identify what data is needed and how it should be processed.
-    2. **Eliminate Ambiguity:** Remove any vague or generic terms. Rephrase the question to precisely state the required data operation.
-    3. **Use Exact Names:** Replace any generic terms with the exact column names and table names from the metadata. Do not invent any names.
-    4. **Ensure Accurate Mapping:** For every column mentioned, clearly indicate the corresponding table (using correct table aliases) and specify join conditions if multiple tables are needed.
-    5. **Include All Necessary Elements:** Ensure that all relevant tables and columns are mentioned so that a correct SQL query can be constructed in the next stage.
-    6. **Avoid Hallucination:** Rely solely on the provided metadata without adding extra or assumed information.
-    7. **Self-Verification:** Before finalizing the reformulated question, list the available columns for each table (from the metadata) and cross-check that each column used in your answer is present in the correct table.
-    8. **Include only required Tables**: Use only required tables for joining and use correct method of joining (in most cases inner join works).
-    9. **Count**: When using COUNT(Col_A) in combination with GROUP BY Col_B, it is recommended to use COUNT(DISTINCT Col_A) to avoid duplicate counts, and ensure that only non-null values of Col_B are included in the grouping.
-    10. "Show Col_A by Col_B" suggests distribution of Col_A by Col_B i.e COUNT(DISTINCT Col_A) & GROUP BY Col_B.
-    11. When using GROUP BY, ensure that only the columns explicitly requested by the user are included in the grouping. Avoid adding unnecessary columns that may alter the intended grouping results.
-    12. In case question has terms like Critical, High, Medium, Low rated Risks it usually refers to inherent_risk_rating and/or residual_risk_rating columns, this is relevant to only risks.
-    13. Please Replace risk_type column with risk_category1 in SQL query if it is there.
-    14. Please do not confuse KRI_MAIN table and its respective columns with key_risk and key_control columns in RISK_UNIVERSE_MAIN and CONTROL_MAIN table respectively.
-    15. When user specifically asks for RCM he requires only risk_id, control_id, risk_name, control_name, inherent_risk_rating, residual_risk_rating, control_rating columns from RU_RCM table.
-    16. In case of KRI dependencies are risks connected to those KRIs.
-    
-    
-    
-    Now, based on the metadata above and the user's question below, generate only the reformulated question:
-    Example Template for Reframed Question: 
-          Question: "What is maximum sales in 2020?" 
-          Reframed Question:"**Formulation Reasoning**:
-                            `Table_A`: `sales`,...
-                            `Table_B`: `year`,...
-                             **Formulation**: Show maximum value of sum of `sales` from `Table_A` where `year` from `Table_B` is '2020'."
-
-    
+    question_prompt = PromptTemplate(template="""You are a data‑analysis assistant that reformulates a natural‑language question into a precise, SQL‑ready technical question
+    using only the supplied metadata below:
+    {selected_metadata}.  
+    Requirements:
+    - Understand and preserve user intent.
+    - Use exact table/column names and aliases.
+    - Use all and only relevant and available columns and data, dont use anything extra.
+    - Specify all joins, filters, groupings, orderings.
+    - No hallucinations—rely solely on selected_metadata.
+    - Self‑check: list each table and its columns you reference.
+    Output format:
+    1. **Reasoning:** mapping of all relevant/required and available columns→tables.
+    2. **Reformulated Question:** the concise, unambiguous question rephrased accurately.
+    Example: 
+    - Question: “What were the top three best‑selling products in the Northeast in Q1?”  
+    - Reformulated Question:
+      **Reasoning:** : `sales` (`product_id`,`region`,`quarter`,`amount`)  
+      **Reformulated Question:**: Show the top 3 `product_id` by sum(`amount`) from `sales` where `region`='Northeast' and `quarter`='Q1'.
     Question: {question}
-    Reformulated Question:
-
-        """,
+    Reformulated Question:"""
+ ,
         input_variables=["selected_metadata", "question"])
     
     llm_chain = LLMChain(prompt=question_prompt, llm=llm)
@@ -351,17 +330,14 @@ def generate_sql_query_for_retrieved_tables(selected_docs, user_question, exampl
     
     
     sql_prompt_template = PromptTemplate(template="""
-                You are a data assistant with access to a MySQL database containing a subset of tables.  
+        You are a data assistant with access to a MySQL database containing a subset of tables.  
         ## Below is the metadata for the selected tables:  
-        
         {selected_metadata}  
-
+ 
         ## Below are few example sets of questions and their respective SQL queries for your reference:
-
+ 
         {Question_SQL_Queries_Examples} 
-        
         Strictly generate only a SELECT SQL query to answer the user's question while following these instructions:  
-        
         1. **Output Only the SQL Query** – Do not include any explanations or additional text. Don't add sql word before or after the query. 
         2. **Valid SQL Syntax** – Strictly ensure that the generated query is syntactically correct for MySQL. Very important task.   
         3. **Proper Table and Column Naming** – Use the exact table and column names as provided in the metadata.  
@@ -380,17 +356,10 @@ def generate_sql_query_for_retrieved_tables(selected_docs, user_question, exampl
         7. **Ensure Correct Joins** –  
            - Use appropriate **INNER JOIN, LEFT JOIN, or RIGHT JOIN** when multiple tables are involved.  
            - Always specify the **correct primary and foreign key relationships** from the metadata. 
-        8. **Very Important**- In query use the tablename where all informations/columns relevant ot user question is available, in case it is not available, please join with other tablename where this information is available.
-        9. **Fuzzy matching **-Please use LIKE % incase of fuzzy matching with string for filtering purpose when there is a doubt about actual value/condition. Please prefer LIKE instead of '=' wherever applicable in SQL query.
-        10. **Column name**- Show (SELECT) all the required column names/counts/aggregates(sum,max,min,avg etc.) from required table/tables to answer the question correctly.
-        11. Please Replace risk_type column with risk_category1 in SQL query if it is there.
-        12. In case question has terms like Critical, High, Medium, Low rated Risks it usually refers to inherent_risk_rating and/or residual_risk_rating columns, this is relevant to only risks.
-        13. Please do not confuse KRI_MAIN table and its respective columns with key_risk and key_control columns in RISK_UNIVERSE_MAIN and CONTROL_MAIN table respectively.
-        14. **Count**: When using COUNT(Col_A) in combination with GROUP BY Col_B, it is recommended to use COUNT(DISTINCT Col_A) to avoid duplicate counts, and ensure that only non-null values of Col_B are included in the grouping.
-        15. "Show Col_A by Col_B" suggests distribution of Col_A by Col_B i.e COUNT(DISTINCT Col_A) & GROUP BY Col_B.
-        
+        8. **Fuzzy matching **-Please use LIKE % incase of fuzzy matching with string for filtering purpose when there is a doubt about actual value/condition. Please prefer LIKE instead of '=' wherever applicable in SQL query.
+        9. Please Replace risk_type column with risk_category1 in SQL query if it is there.
         ## User's Question: {question}  
-        ## SQL Query: 
+        ## SQL Query:  
         """,input_variables=["selected_metadata","Question_SQL_Queries_Examples", "question"])
 
     llm_chain_sql = LLMChain(prompt=sql_prompt_template, llm=llm)
