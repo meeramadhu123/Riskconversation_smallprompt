@@ -1,0 +1,830 @@
+Table: ACTION_MAIN
+Description: Stores details of actions associated with a risk, which generally comes from an auditor; some risk may or may not have associated action tagged to them. Table ontains status, priority, ownership, and key dates for tracking and management fields.
+Columns:
+    object_id:  (Object ID) A unique identifier for each action item, likely a system-generated hash value.
+    action_id:  (Action ID) A unique reference code assigned to each action for tracking and identification.
+    title:  (Title) A brief description of the action name or issue name, explaining the issue or task to be addressed.
+    status:  (Status) The current state of the action item (e.g., Open, Closed, In Progress, Review).
+    priority:  (Priority) The urgency level assigned to the action/issue (e.g., High, Medium, Low) also indicate type of action/issue.
+    due_date:  (Due Date) The deadline by which the action item is expected to be completed.
+    mega_process:  (Mega Process) The broad business function or category under which the action falls (e.g., Procurement, Talent Acquisition).
+    owner:  (Owner) The individual or department responsible for executing the action.
+    created_by:  (Created by) The name of the person who initially recorded or created the action item.
+    created_date:  (Created Date) The date when the action item was created in the system.
+    updated_by:  (Updated by) The name of the person who last modified or updated the action item.
+    modified_date:  (Modified Date) The most recent date when changes were made to the action item.
+Relation:
+    ACTION_TYPE_LOOKUP: action_id, source_object_id
+
+Table: ACTION_TYPE_LOOKUP
+Description: This a look-up table that maps actions to their source. The table helps identifying the action origin/source
+Columns:
+    action_id:  (Action ID) Unique reference code assigned to each action for tracking and identification.
+    source:  (Source) Indicates the origin or classification, such as audit, regulation, incident, or control assessment.
+    source_table:  (nan) Indicates the origin of the data, specifying which table the record belongs to.
+    source_object_id:  (Object ID) Unique system-generated identifier for records across different entities
+Relation:
+    ACTION_MAIN: action_id, source_object_id
+    RISK_UNIVERSE_MAIN: source_table, source_object_id
+    KRI_MAIN: source_table, source_object_id
+   	
+
+Table: AUDIT_OBSERVATIONS
+Description: Audit observations highlight areas for improvement or potential concerns identified during an audit process. They differ from audit findings, which typically indicate specific violations of criteria or requirements. Observations are less severe than findings and often represent areas where an organization can enhance its processes or mitigate potential risks. Unlike findings, observations don't necessarily indicate non-compliance or breaches of regulations. Audit observations can serve as the basis for recommendations made by auditors to improve the organization's performance and risk management. 
+Captures audit findings, including observations, recommendations, actions, and their statuses, along with ownership and due dates for monitoring compliance and risk management
+Columns:
+    audit_id:  (Audit ID) A unique identifier for each audit. use this column for queries like count and count distinct.
+    status_of_audit:  (Status of Audit) The current status of the audit (e.g., Completed, Ongoing, Pending).
+    observation_id:  (Observation ID) A unique identifier for each audit observation.
+    observation:  (Observation) A description of the finding or issue noted during the audit.
+    rating:  (Rating) A rating assigned to the observation based on its severity or impact.
+    observation_status:  (Status) The current status of the audit observation (e.g., Open, Closed, Under Review).
+    description:  (Description) Additional details or explanation about the observation.
+    created_date:  (Created Date) The date when the audit observation was recorded.
+    parent_type:  (Parent Type) The broader category or classification under which the observation falls.
+    observation_age:  (Age) The duration (in days or months) since the observation was first recorded.
+    observation_custom_id:  (Observation Custom ID) A custom-defined identifier for the observation, possibly used for internal tracking.
+    due_date:  (Due Date) The deadline for resolving or addressing the observation.
+    source:  (Source) The origin of the audit observation, such as an internal audit, external audit, or compliance check.
+    fiscal_year:  (Fiscal Year) The financial year in which the observation was recorded.
+    created_by:  (Created by) The name or ID of the person who created the audit observation.
+    status_of_risk_program:  (Status of Risk Program) The current status of the risk mitigation program associated with the observation.
+    action_status:  (Action Status) The status of corrective actions taken in response to the observation.
+    actions:  (Actions) The corrective or preventive actions identified to resolve the observation.
+    recommendation_overdue:  (Recommendation Overdue) Whether the recommended actions for the observation are overdue.
+    recommendation:  (Recommendations) Suggested remedial steps or best practices to mitigate the observation.
+    recommendation_status:  (Recommendation Status) The progress or completion status of the recommendations.
+    management_status:  (Management Status) The response or actions taken by management to address the observation.
+    management_overdue:  (Management Overdue) Whether management's actions are overdue.
+    management_count:  (Management Response) The number of management actions taken regarding the observation.
+    department_level1:  (Department Level 1) The primary department responsible for addressing the observation.
+    observation_business_user:  (Business User) The business user or team responsible for handling the observation.
+    implementation_owner:  (Implementation Owner) The individual accountable for implementing corrective measures.
+    audit:  (Audit) The name or type of audit under which the observation was recorded.
+    risk_count:  (Risk) The number of risks identified in relation to the observation.
+    control_count:  (Controls) The number of control measures associated with the observation.
+    observation_overdue_days:  (Overdue Days) The number of days the observation has been overdue for resolution.
+    management_users:  (Management Users) The list of management personnel involved in addressing the observation.
+    actions_overdue:  (Actions Overdue) Whether the assigned actions for the observation are overdue.
+    mr_implementation_due_date:  (Implementation Due) The final deadline for completing the mitigation or resolution process.
+Relation:
+    RP_AO_LOOKUP: audit_id
+
+
+Table: CAUSES_MAIN
+Description: Maintains details of identified causes for a corresponding risks, including their description, priority, status, and tracking information for creation and updates. Causes and risks can have many-to-many relationship.
+Columns:
+    cause_id:  (Cause ID) A unique identifier assigned to each cause.
+    title:  (Title) A short descriptive title summarizing the cause.
+    status:  (Cause Status) The current status of the cause (e.g., Open, In Progress, Review).
+    priority:  (Priority) The priority level assigned to the cause (e.g., High, Medium, Low).
+    description:  (Description) A detailed explanation of the cause and its implications.
+    created_by:  (Created by) The name of the person who initially created the cause.
+    updated_by:  (Updated by) The name of the person who last updated the cause.
+    created_at:  (Created At) The timestamp indicating when the cause was created.
+    updated_at:  (Updated At) The timestamp indicating when the cause was last updated.
+Relation:
+    RC_LOOKUP: cause_id
+
+Table: CM_CP_LOOKUP
+Description: Establishes a relationship between compliance programs and controls by mapping compliance IDs to control IDs
+Columns:
+    compliance_id:  (Compliance ID) Unique identifier assigned to each compliance program.
+    control_id:  (Control ID) Unique identifier assigned to a control, often linked to associated risks
+Relation:
+    COMPLIANCE_PROGRAMS: compliance_id
+    CONTROL_MAIN: control_id
+    CONTROL_MOVEMENT: control_id
+    RU_RCM: control_id
+
+Table: COMPLIANCE_PROGRAMS
+Description: compliance programs refer to an organization's internal policies and procedures designed to ensure adherence to laws, regulations, and internal guidelines. A robust compliance program goes beyond fulfilling legal obligations, aiming to establish an ethical culture, minimize risks, and protect the organization's reputation. The table tracks compliance initiatives taken by the organization, including their status, risk impact, observations, recommendations, and overall compliance scores throughout different stages
+Columns:
+    compliance_title:  (Compliance Title) The title or name of the compliance program.
+    compliance_id:  (Compliance ID) A unique identifier assigned to each compliance program.
+    start_date:  (Start Date) The date when the compliance program started.
+    end_date:  (End Date) The planned or actual end date of the compliance program.
+    created_by:  (Created By) The name of the person who created the compliance program entry.
+    status_of_audit:  (Status of Audit) The current phase or progress of the audit associated with compliance.
+    likelihood:  (Likelihood) The probability or likelihood of compliance risks occurring.
+    overall_score:  (Overall Score) A numerical score representing the overall compliance rating.
+    rating_overall_score:  (Rating Overall Score) The overall rating derived from compliance performance metrics.
+    current_stage:  (Current Stage) The present phase of the compliance program (e.g., Field Work, Final Report, Kick-Off Meeting).
+    type:  (Type) The category of compliance (e.g., Assessment, Governance, Risk, and Compliance).
+    status:  (Status) The current status of the compliance program (e.g., Open, In Progress, Completed).
+    compliance_score:  (Compliance Score) A score specifically related to compliance performance.
+    create_date:  (Created Date) The date when the compliance entry was recorded in the system.
+    observation_count:  (Observations) The total number of audit observations recorded for the compliance program.
+    recommendation_count:  (Recommendations) The total number of recommendations provided for improvements.
+    mr_count:  (Management Responses) The number of responses provided by management regarding the compliance issues.
+    actions_count:  (Actions) The total number of corrective or preventive actions taken for compliance improvement.
+    impact:  (Impact) The level of impact associated with compliance findings, indicating severity or consequences.
+Relation:
+    CM_CP_LOOKUP: compliance_id
+
+
+Table: CONTROL_MAIN
+Description: Stores detailed information on internal controls associated with respective risks, 
+documents and assesses the effectiveness of internal controls.It helps auditors evaluate the strength of the control system and identify areas for improvement including their type, effectiveness, ownership, implementation status, risk mitigation impact, audit evaluation, and compliance with industry best practices.
+Columns:
+    control_name:  (Control Name) The name of the control being assessed.
+    control_type:  (Control Type) The category or classification of the control (e.g., preventive, detective).
+    control_automation:  (Control Automation) Specifies if the control is automated, manual, or semi-automated.
+    control_frequency:  (Control Frequency) The periodicity at which the control is executed (e.g., daily, weekly).
+    control_rating:  (Control Rating) A rating assigned to the control based on its effectiveness and impact.
+    control_description:  (Control Description) A detailed explanation of the control's function and purpose.
+    control_manager:  (Control Manager) The person or department responsible for overseeing the control.
+    control_owner:  (Control Owner) The individual accountable for the control's execution.
+    process:  (Process) The high-level business process to which the control belongs.
+    sub_process:  (Sub Process) A more granular component of the main process where the control is applied.
+    key_control:  (Key Control) Indicates whether the control is considered a key control (Yes/No).
+    ease_of_implementation:  (Ease Of Implementation) How easily the control can be implemented within the business.
+    ease_of_maintain:  (Ease Of Maintain) The level of effort required to maintain and sustain the control.
+    cost_to_implement_maintain:  (Cost To Implement Maintain) Estimated cost to implement and maintain the control.
+    control_design_evaluation:  (Control Design Evaluation) Assessment of the effectiveness of the control's design.
+    mitigating_action:  (Mitigating Action) Additional actions taken to reduce residual risk.
+    contingent_action:  (Contingent Action) Actions to be taken in case the control fails.
+    progress_on_actions:  (Progress on Actions) Status update on remediation or corrective actions taken.
+    testing_description:  (Testing Description) Details on how the control is tested for effectiveness.
+    industry_best_practice:  (Industry Best Practice) Industry-recommended practices for implementing controls.
+    mega_process:  (Mega Process) The overarching business process category (e.g., Financial Reporting).
+    major_process:  (Major Process) A specific segment within the mega process.
+    department_level3:  (Department Level 3) Third-level department categorization.
+    department_level4:  (Department Level 4) Fourth-level department categorization.
+    control_id:  (Control ID) A unique identifier assigned to the control.
+    likelihood:  (Likelihood) The probability of risk occurrence associated with the control.
+    impact:  (Impact) The potential consequences if the control fails.
+    control_score:  (Score) An overall effectiveness score assigned to the control.
+    created_by:  (Created by) The person responsible for creating the control record.
+    extra_textbox_v1:  (Text 1) Additional text input field for supplementary information.
+    extra_textbox_v2:  (Text 2) Additional text input field for supplementary information.
+    extra_textbox_v3:  (Text 3) Additional text input field for supplementary information.
+    extra_textbox_v4:  (Text 4) Additional text input field for supplementary information.
+    extra_textbox_v5:  (Text 5) Additional text input field for supplementary information.
+    extra_textarea_v1:  (Long Text 1) Additional text area for capturing detailed information.
+    extra_textarea_v2:  (Long Text 2) Additional text area for capturing detailed information.
+    extra_textarea_v3:  (Long Text 3) Additional text area for capturing detailed information.
+    extra_textarea_v4:  (Long Text 4) Additional text area for capturing detailed information.
+    extra_textarea_v5:  (Long Text 5) Additional text area for capturing detailed information.
+    multiple_dropdown_v1:  (Dropdown - Multi Select 1) A multiple-choice selection field for categorization.
+    multiple_dropdown_v2:  (Dropdown - Multi Select 2) A multiple-choice selection field for categorization.
+    multiple_dropdown_v3:  (Dropdown - Multi Select 3) A multiple-choice selection field for categorization.
+    multiple_dropdown_v4:  (Dropdown - Multi Select 4) A multiple-choice selection field for categorization.
+    multiple_dropdown_v5:  (Dropdown - Multi Select 5) A multiple-choice selection field for categorization.
+    created_date:  (Created Date) The date when the control record was created.
+    additional_designation:  (Designation 1) A designation or additional categorization.
+    approval_status:  (Approval Status) The current status of the control approval process.
+    approved_by:  (Approved by) The person or authority who approved the control.
+    approved_on:  (Approved on) The date or timestamp when the control was approved.
+    functions:  (Functions) The function or business domain related to the control.
+    audit_likelihood:  (Audit Likelihood) The probability of the control being audited.
+    audit_impact:  (Audit Impact) The significance of findings if the control is audited.
+    audit_rating:  (Rating) The rating assigned to the control after an audit.
+    audit_rating_comment:  (Rating Comment) Comments explaining the audit rating.
+    multi_entity:  (Entity) Indicates if the control applies to multiple business entities.
+    generic_type:  (Generic Type) The general classification of the control.
+    regions:  (Regions) Geographical regions where the control is applicable.
+    branch_level1:  (Branch Level 1) First-level branch classification.
+    branch_level2:  (Branch Level 2) Second-level branch classification.
+    branch_level3:  (Branch Level 3) Third-level branch classification.
+    branch_level4:  (Branch Level 4) Fourth-level branch classification.
+    topic_level1:  (Topic Level 1) First-level topic classification.
+    topic_level2:  (Topic Level 2) Second-level topic classification.
+    topic_level3:  (Topic Level 3) Third-level topic classification.
+    topic_level4:  (Topic Level 4) Fourth-level topic classification.
+    procedure_level1:  (Procedure Level 1) First-level procedure classification.
+    procedure_level2:  (Procedure Level 2) Second-level procedure classification.
+    procedure_level3:  (Procedure Level 3) Third-level procedure classification.
+    procedure_level4:  (Procedure Level 4) Fourth-level procedure classification.
+    test_of_design:  (Test of Design) An evaluation of how well the control is designed.
+    domain:  (Domain) The business area or industry related to the control.
+    cause_count:  (Cause Count) The number of identified causes related to control failures.
+    impact_count:  (Impact Count) The number of impact instances recorded for the control.
+    risk_count:  (Risk Count) The number of risks associated with the control.
+    implementation_status:  (Implementation Status) The current status of the control implementation.
+    next_review_on:  (Next Review On) The scheduled date for the next review of the control.
+    control_category:  (Control Category) A classification grouping similar controls together.
+    generic_tag:  (Generic Tag) A broad tag to categorize the control.
+    clause:  (Clause) A regulatory or compliance clause associated with the control.
+    control_custom_id:  (Control Custom ID) A custom identifier assigned to the control.
+    reduces_impact_of_risk:  (Reduces Impact Of Risk) Indicates whether the control helps reduce risk impact.
+    reduces_likelihood_of_risk_occuring:  (Reduces Likelihood Of Risk Occuring) Specifies if the control lowers the probability of risk.
+    fiscal_year:  (Fiscal Year) The financial year during which the control is assessed.
+    department_level1:  (Department Level 1) First-level department classification.
+    department_level2:  (Department Level 2) Second-level department classification.
+    sector:  (Sector) The industry or sector associated with the control.
+Relation:
+    CM_CP_LOOKUP: control_id
+    WP_SOURCE_LOOKUP: control_id
+    RU_RCM: control_id
+
+
+
+Table: CONTROL_MOVEMENT
+Description: Tracks changes in control ratings over time, recording historical adjustments for audit and compliance purposes
+Columns:
+    control_id:  (Control ID) A unique identifier assigned to each control, used for tracking changes and performance over time.
+    history_date:  (nan) The date on which a change in control rating was recorded, indicating when the assessment or update took place.
+    new_control_rating:  (nan) The updated rating assigned to the control after assessment, reflecting its current effectiveness (e.g., Excellent, Poor).
+    old_control_rating:  (nan) The previous rating of the control before the most recent update, used for comparison and tracking improvements or degradations.
+Relation:
+    CM_CP_LOOKUP: control_id
+    WP_SOURCE_LOOKUP: control_id
+    CONTROL_MAIN: control_id
+    RU_RCM: control_id
+
+
+Table: IMPACTS_MAIN
+Description: It captures the consequences or effects of identified causes/risks. This table helps the reader understand the significance of the audit findings and the need for corrective action. Captures details of identified impacts related to causes (causes lead to risk). 
+including their description, priority, status, and tracking information for creation and updates.
+Columns:
+    impact_id:  (Impact ID) A unique identifier assigned to each impact record.
+    title:  (Title) The name or heading associated with the impact.
+    description:  (Description) A detailed explanation or summary of the impact.
+    status:  (Impact Status) The current state of the impact (e.g., Active, Inactive, Closed).
+    priority:  (Priority) The level of urgency or importance assigned to the impact (e.g., High, Medium, Low).
+    created_by:  (Created By) The name or ID of the person who created the impact record.
+    updated_by:  (Updated By) The name or ID of the person who last modified the impact record.
+    created_at:  (Created At) The timestamp indicating when the impact record was initially created.
+    updated_at:  (Updated At) The timestamp indicating the most recent update to the impact record.
+Relation:
+    IMR_LOOKUP: impact_id
+
+Table: IMR_LOOKUP
+Description: This table helps in mapping impacts to associated risks. It helps in establishing a relationship between identified risks and identified impacts.
+Columns:
+    impact_id:  (Impact ID) Unique identifier assigned to each impact record.
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+Relation:
+    IMPACTS_MAIN: impact_id
+    SE_MAIN: risk_id
+    RU_RCM: risk_id
+
+
+Table: IR_LOOKUP
+Description: This table helps in mapping audit issues to related risks. It helps in tracking risk associated to their identified issues. 
+Columns:
+    issue_id:  (Issue ID) Unique identifier assigned to each issue.
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+Relation:
+    ISSUES_MAIN: issue_id
+    SE_MAIN: risk_id
+    RU_RCM: risk_id
+
+Table: ISSUES_MAIN
+Description: This table tracks and manages findings that could negatively impact organizational objectives. It typically links to risks, controls and serves as a central place to manage risk-related problems or deviations.It contains issues identified in an audit, including their status, rating, and last update details for effective issue management.
+Columns:
+    issue_id:  (Issue ID) A unique identifier assigned to each issue.
+    issue_title:  (Issue Title) A brief title or summary describing the issue.
+    status:  (Status) The current state of the issue (e.g., Open, Closed, In Progress).
+    rating:  (Rating) The severity or impact level of the issue (e.g., Critical, High, Medium, Low).
+    updated_by:  (Updated By) The name or ID of the person who last modified the issue record.
+    modified_date:  (Modified Date) The timestamp indicating the most recent update to the issue record.
+Relation:
+    IR_LOOKUP: issue_id
+
+
+Table: KRI_MAIN
+Description: This table contains Key Risk Indicators (KRIs). These are a subset of risks that are more critical to the business and are closely monitored.
+Tracking their ratings, trends, thresholds helps in assessing risk levels over time
+Columns:
+    object_id:  (Object ID) A unique identifier for each Key Risk Indicator (KRI) record.
+    kri_id:  (KRI ID) A unique reference code assigned to the Key Risk Indicator.
+    title:  (Title) The name or title describing the Key Risk Indicator.
+    entity:  (Entity) The organization or business unit responsible for monitoring the KRI.
+    rating:  (Rating) The severity level of the KRI, such as Low, Medium, or High.
+    trend:  (Trend) Indicates how the KRI is evolving over time (e.g., "Off Track", "No Change").
+    threshold:  (Threshold) Indicates whether the KRI is within, above, or below the defined threshold. If a KRI is above threshold it indicates the risk should be addressed on priority.
+    latest_scores:  (Latest Scores) JSON-structured data containing recent KRI scores, dates, colors, ratings, and scoring details.
+    occurrence:  (Occurrence) Specifies how often the KRI is reviewed (e.g., Monthly, Quarterly).
+    starting_from:  (Starting From) The date when the KRI monitoring started.
+    ending_on:  (Ending On) The expected or actual end date for KRI monitoring.
+    due_date:  (Due Date) The deadline for addressing or reviewing the KRI.
+    tolerance_levels:  (Tolerance Levels) Defines the acceptable ranges for risk levels (Low, Medium, High) based on threshold values.
+    department_level1:  (Department Level 1) The main department responsible for monitoring the KRI.
+    department_level2:  (Department Level 2) The specific team or sub-department managing the KRI within the primary department.
+    monitored_by_designation:  (Monitored by Designation) The job title of the person responsible for overseeing the KRI.
+    monitored_by_user:  (Monitored by User) The name of the individual actively tracking and assessing the KRI.
+    created_date:  (Created Date) The date when the KRI record was initially created.
+    updated_by:  (Updated By) The name of the person who last modified the KRI record.
+    updated_date:  (Updated Date) The timestamp of the most recent update to the KRI record.
+Relation:
+    KRI_SCORE_LOOKUP: kri_id
+    RKRI_LOOKUP: kri_id
+    ACTION_TYPE_LOOKUP: source_object_id
+
+Table: KRI_SCORE_LOOKUP
+Description: The table stores Key Risk Indicator (KRI) Ids and their associated scores ids. 
+The score ids are related to the SCORE table where actual KRIs scores are stored for tracking risk performance.
+Columns:
+    score_id:  (Score ID) Unique identifier for each risk score entry.
+    kri_id:  (KRI ID) Unique reference code assigned to the Key Risk Indicator.
+Relation:
+    SCORE: score_id
+    KRI_MAIN: kri_id
+
+
+Table: MITIGATION_PLANS_MAIN
+Description: Mitigation plan is a steps laid out to address risks and weak controls in the organization. This table stores details of mitigation plans developed to address identified risks or weak control. 
+It includes information such as mitigation strategy, responsible owner, timelines, status, and related risk references, enabling effective tracking and management
+of risk response activities.
+Columns:
+    mitigation_id:  (Mitigation ID) A unique identifier assigned to each mitigation action.
+    title:  (Title) The name of the mitigation action or policy being implemented.
+    description:  (Description) A detailed explanation of the mitigation action or policy.
+    owners:  (Owners) The individual or team responsible for overseeing the mitigation action. 
+    status:  (Status) The current state of the mitigation action (e.g., Open, In Progress).
+    created_at:  (Created At) The timestamp when the mitigation action was initially created.
+    updated_by:  (Updated By) The name of the user who last updated the mitigation action.
+    updated_at:  (Updated At) The timestamp when the mitigation action was last modified. 
+    created_by:  (Created By) The name of the user who originally created the mitigation action.
+Relation:
+    MPR_LOOKUP: mitigation_id
+
+
+Table: MPR_LOOKUP
+Description: A lookup table that links risks to their corresponding mitigation plans, ensuring effective risk treatment and tracking
+Columns:
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+    mitigation_id:  (Mitigation ID) Unique identifier assigned to each mitigation action.
+Relation:
+    SE_MAIN: risk_id
+    RU_RCM: risk_id
+    MITIGATION_PLANS_MAIN: mitigation_id
+
+
+Table: RC_LOOKUP
+Description: A lookup table that establishes a relationship between risks and their root causes for effective risk analysis and management
+Columns:
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+    cause_id:  (Cause ID) Unique identifier assigned to each cause.
+Relation:
+    SE_MAIN: risk_id
+    RU_RCM: risk_id
+    CAUSES_MAIN: cause_id
+
+
+Table: RISK_PLAN
+Description: Table contains name of the risk management plans which outlines a structured approach for reviewing or assessing risks within a defined timeframe.
+Columns:
+    plan_id:  (Plan ID) Unique identifier for a specific risk management plan.
+    plan_name:  (Plan Name) Name of the risk plan, indicating its purpose or focus.
+    status:  (Status) Current state of the risk plan (e.g., Active, Inactive, Completed).
+    period:  (Period) Duration covered by the risk plan, defined by a start and end date.
+    created_by:  (Created by) Name of the person who created or initiated the risk plan.
+Relation:
+    RP_RP_LOOKUP: plan_id
+
+Table: RISK_PROGRAM
+Description: A risk program in audit refers to a systematic approach where auditors focus on areas with the highest potential for errors, 
+fraud, or other risks. It's a framework that helps auditors prioritize their work, allocate resources effectively, and ensure they are 
+addressing the most significant issues. The table represents a collection of risk programs. This table serves as the master record for managing
+and monitoring the lifecycle of various 
+risk programs from initiation through completion.
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    plan_name:  (Plan) Name of the risk plan under which the program falls.
+    risk_program_name:  (Name) Title or focus area of the risk program.
+    status_of_risk_program:  (Status of Risk Program) Current status of the risk program (e.g., Not Commenced, In Progress, Completed).
+    risk_program_requested_by:  (Requested By) Entity or committee that initiated the risk program.
+    risk_program_dropdown_v1:  (Dropdown - Single Select 1) Additional classification or category selection for the risk program.
+    start_date:  (Start Date) Scheduled start date of the risk program.
+    end_date:  (End Date) Scheduled end date of the risk program.
+    riskprogram_text_v1:  (Text 1) Additional details or description related to the risk program.
+    objective:  (Objective) Purpose or goal of the risk program (e.g., Quarterly review of HR risks).
+    scope:  (Scope) Defines the coverage or extent of the risk program (e.g., Department-wide, Enterprise-wide).
+    fiscal_year:  (Fiscal Year) The financial year in which the risk program is executed.
+    created_date:  (Created Date) Date when the risk program record was created.
+    created_by:  (Created by) Name of the person who created or initiated the risk program.
+    current_stage:  (Current Stage) The present phase of the risk program (e.g., Kick-Off Meeting, Risk Assessment).
+    entity_new:  (Entity New) Organizations or business units involved in the risk program.
+    tier:  (Tier) Classification of the entity based on risk exposure (e.g., Tier 1, Tier 2, Tier 3).
+    priority:  (Priority) The risk priority level (e.g., Critical, High, Medium, Low).
+    department_level1:  (Department Level 1) Primary department associated with the risk program (e.g., Human Resources).
+    department_level2:  (Department Level 2) Sub-departments or specific teams involved in the risk program.
+    observation_count:  (Observation Count) Number of observations recorded during the risk review process.
+    management_response_count:  (Management Response Count) Number of responses provided by management for identified risks.
+    recommendations_count:  (Recommendations Count) Number of recommendations proposed based on risk findings.
+    actual_start_date:  (Actual Start Date) The actual date when the risk program began execution.
+Relation:
+    RP_AO_LOOKUP: risk_program_id
+    RP_RP_LOOKUP: risk_program_id
+    RP_RPO_LOOKUP: risk_program_id
+    RP_RS_LOOKUP: risk_program_id
+    RP_WP_LOOKUP: risk_program_id
+
+Table: RISK_PROGRAM_OBSERVATIONS
+Description: The table stores detailed audit findings and observations that are identified during the execution of specific risk programs.
+Each record captures individual observations linked to a parent risk program, documenting issues, deficiencies, or areas 
+of concern discovered during the risk assessment process. This table serves as a repository for all documented observations 
+that support the overall risk evaluation and provide evidence for audit conclusions and recommendations. Tracks risk program observations, including their status, ratings, overdue actions, recommendations, and management responses for effective risk assessment and mitigation.
+Columns:
+    observation_id:  (Observation ID) Unique identifier for the recorded risk observation.
+    observation:  (Observation) Brief description or label for the identified risk observation.
+    rating:  (Rating) Risk severity level assigned to the observation (e.g., Critical, High, Medium, Low).
+    observation_status:  (Status) Current status of the observation (e.g., Open, Closed, Under Review).
+    created_date:  (Created) Date when the observation was recorded.
+    observation_age:  (Age) Time elapsed since the observation was created.
+    due_date:  (Due Date) Deadline for addressing or resolving the observation.
+    created_by:  (Created by) Name of the individual who documented the observation.
+    status_of_risk_program:  (Status of Risk Program) The current stage of the associated risk program (e.g., Not Commenced, In Progress).
+    action_status:  (action_status) Status of the corrective actions taken for the observation.
+    actions:  (actions) Number of corrective or preventive actions assigned to the observation.
+    recommendation_overdue:  (Recommendation Overdue) Count of overdue recommendations linked to the observation.
+    recommendation:  (Total number of recommendation) Number of recommendations made to mitigate the identified risk.
+    recommendation_status:  (Recommendation Status) Current implementation status of the recommendations.
+    management_status:  (Management Status) Status of managementâ€™s response to the observation.
+    management_overdue:  (Management Overdue) Count of overdue management responses related to the observation.
+    management_count:  (Management Responses) Total number of management responses recorded.
+    department_level1:  (Department Level 1) Primary department responsible for addressing the observation.
+    department_level2:  (Department Level 2) Sub-department involved in handling the observation.
+    observation_business_user:  (Business User) Business user responsible for monitoring or addressing the observation.
+    implementation_owner:  (Implementation Owner) Individual or team responsible for implementing corrective actions.
+    audit:  (Audit) Reference ID related to an audit linked to the observation.
+    risk_count:  (Number of Risk) Number of associated risks linked to this observation.
+    control_count:  (Number of Controls) Number of control measures applied to mitigate the observation's risk.
+    observation_overdue_days:  (Overdue Days) Number of days the observation has exceeded its due date.
+    management_users:  (Management Users) Users from management involved in reviewing or resolving the observation.
+    actions_overdue:  (Actions Overdue) Count of overdue corrective actions that have not been implemented.
+Relation: 
+    RP_RPO_LOOKUP: observation_id
+   
+
+
+Table: RISK_REGISTER
+Description: The table contains collection or repository of registers where each register contains a set of risks related to a department or process.
+A risk is a potential threat that can impact the overall wellbeing of an organization or a department. Some risks are tagged inside a risk register while others are not. 
+This table functions as the master risk inventory that enables systematic organization and management of an entity's complete risk portfolio across various categories including strategic, operational, 
+financial, compliance, technology, and reputational risks.
+Columns:
+    register_id:  (Register ID) Unique identifier for the risk register entry.
+    plan_name:  (Plan Name) Name of the risk register, describing the category or focus of risks recorded (e.g., IT risks, operational risks).
+    status:  (Status) Current status of the risk register (e.g., Active, Inactive, Under Review).
+    risks:  (Risks) the number of risks documented inside the register.
+    created_by:  (Created by) Name of the individual that created the risk register; This is not the risk_owner of the risks inside the register.
+Relation: 
+    RR_LOOKUP: register_id
+
+
+Table: RISK_SCHEDULE
+Description: A risk program in audit refers to a systematic approach where auditors focus on areas with the highest potential for errors, 
+fraud, or other risks. It's a framework that helps auditors prioritize their work, allocate resources effectively, and ensure they are 
+addressing the most significant issues. The table tracks the timeline and status of risk program activities. This includes planned, actual start and end dates for each stage
+Columns:
+    activity_id:  (Sub Activity ID) Unique identifier for a scheduled risk management activity.
+    risk_program_stage:  (Sub Activity) Represents the current phase of the risk management schedule, including activities such as Kick-Off Meeting, Initial Data Analytics, Requirement Communication, and Audit Preparation
+    status_of_risk_program:  (Status) Current status of the scheduled risk program (e.g., not commenced, in progress, completed).
+    start_date:  (Start Date) Actual date when a scheduled risk activity began.
+    planned_start_date:  (Planned Start Date) Scheduled start date for a risk-related activity in the risk schedule.
+    end_date:  (End Date) Actual date when a scheduled risk activity was completed or closed.
+Relation: 
+    RP_RS_LOOKUP: activity_id
+
+
+Table: RISK_UNIVERSE_MAIN
+Description: The table serves as the comprehensive master reference that defines the complete scope of all potential risks that could affect an organization across all business areas and functions. This table establishes the foundational risk taxonomy and categorization framework that guides risk identification processes throughout the organization. It functions as the authoritative source for ensuring comprehensive risk coverage and standardized risk classification across all risk management activities and assessments. Has information on fraud related risks. If it is a fraud related risk the column "fraud_related" is "Yes" otherwise "No".
+Serves as a comprehensive repository of risks, tracking their details, ratings, controls, causes, impacts, mitigation strategies, ownership, and alignment with business processes and strategies.
+Columns:
+    object_id:  (Object ID) Unique system-generated identifier for the risk record.
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+    risk_custom_id:  (Risk Custom Id) Custom risk ID used for internal tracking and classification.
+    created_date:  (Created Date) Date when the risk was first identified and recorded.
+    risk_name:  (Risk Title) Name or title assigned to the risk for reference.
+    controls:  (Controls) Mitigation measures, controls, or processes implemented to reduce risk impact.
+    cause_count:  (Cause Count) Number of identified causes that contribute to the occurrence of the risk.
+    impact_count:  (Impact Count) Number of identified impacts if the risk materializes.
+    created_by:  (Created by) User or entity responsible for creating the risk entry.
+    manager:  (Risk Manager) Individual responsible for overseeing and managing the risk.
+    owner:  (Risk Owner) Person or department accountable for managing and mitigating the risk.
+    risk_description:  (Risk Description) Detailed explanation of the nature, scope, and potential consequences of the risk.
+    residual_risk_rating_scoring_section:  (Residual Risk Rating Scoring Section) Numerical or categorical scoring used to assess the residual risk level after mitigation.
+    testing_description:  (Testing Description) Description of risk assessment, testing methodologies, and validation efforts.
+    treatment:  (Treatment) Actions or strategies applied to mitigate or manage the risk.
+    stage:  (Risk Stage) Indicates the current stage of the risk lifecycle (e.g., Identified, Assessed, Mitigation in Progress, Closed).
+    decision_maker_v1:  (Decision Maker V1) Person or authority responsible for key decisions related to risk management.
+    scoring_model:  (Scoring Model) Methodology or framework used for risk assessment and scoring (e.g., qualitative, quantitative, hybrid).
+    approval_status:  (Approval Status) Status of risk approval (e.g., Pending, Approved, Rejected).
+    risk_type:  (Risk Type) Category or classification of risk type (e.g., 'Financial', 'Operations','Strategic', 'Compliance','Business','Regional').
+    inherent_likelihood:  (Inherent Likelihood) Probability of the risk occurring before any mitigation measures are applied.
+    residual_likelihood:  (Residual Likelihood) Probability of the risk occurring after mitigation measures have been implemented.
+    residual_impact:  (Residual Impact) Impact severity if the risk materializes after applying controls.
+    inherent_impact:  (Inherent Impact) Expected severity of impact if no controls or mitigation measures are in place.
+    target_residual_risk:  (Target Residual Risk) Desired level of risk exposure after full mitigation efforts.
+    inherent_score:  (Inherent Score) Risk score calculated based on the inherent likelihood and impact.
+    residual_score:  (Residual Score) Risk score calculated after considering implemented mitigation measures.
+    previous_residual_last_updated:  (Previous Residual Last Updated) Timestamp of the last update to the residual risk assessment.
+    previous_residual_rating:  (Previous Residual Rating) Residual risk rating assigned in the last assessment cycle.
+    inherent_risk_rating:  (Inherent Risk Rating) Overall rating of the inherent risk before mitigation (e.g., High, Medium, Low).
+    residual_risk_rating:  (Residual Risk Rating) Final rating of risk after applying mitigation strategies.
+    risk_outcome:  (Risk Outcome) Expected outcome or consequence if the risk materializes.
+    risk_velocity:  (Risk Velocity) Speed at which the risk can impact the organization once triggered.
+    vulnerability:  (Vulnerability) Weaknesses or gaps in controls that may expose the organization to risk.
+    multi_entity:  (Entity) Indicates if the risk affects multiple business units, entities, or geographies.
+    risk_department_level1:  (Department Level 1) Primary department responsible for managing the risk.
+    risk_department_level2:  (Department Level 2) Secondary classification of the responsible department.
+    regions:  (Regions) Geographic regions where the risk applies or has potential impact.
+    functions:  (Functions) Business functions impacted by the risk (e.g., HR, Finance, IT).
+    sector:  (Sector) Industry sector to which the risk is related (e.g., Banking, Retail, Healthcare).
+    risk_department_level3:  (Department Level 3) Tertiary classification of the responsible department.
+    risk_department_level4:  (Department Level 4) Quaternary classification of the responsible department.
+    risk_category1:  (Category1) High-level classification of the risk based on industry standards.
+    risk_business_strategy:  (Strategy) Business strategy or objectives that the risk may impact.
+    mega_process_v2:  (Mega Process V2) High-level business processes affected by the risk.
+    major_process_v2:  (Major Process V2) Specific sub-processes that are impacted by the risk.
+    review_date:  (Review Date) Scheduled date for the next review or reassessment of the risk.
+    source:  (Source) Origin of the risk (e.g., Internal Audit, External Regulation, Incident Report).
+    risk_extra_textbox:  (Text) Additional textual field for risk-related details not captured in standard fields.
+    approved_or_rejected_by:  (Approved by) Name of the person or authority who approved or rejected the risk.
+    approved_date:  (Approved on) Date when the risk assessment or mitigation plan was approved.
+    cause:  (Cause) Root cause or factors contributing to the occurrence of the risk.
+    risk_new_textbox:  (Text) Additional field for capturing any new risk-related textual information.
+    risk_identifier:  (Risk Identifier) Unique identifier or reference number assigned to the risk.
+    risk_auxiliary_textbox:  (Text) Auxiliary text field for supporting information related to the risk.
+    status:  (Status) Current status of the risk (e.g., Open, Mitigated, Closed, Under Review).
+    risk_additional_textbox:  (Long Text) Extra text field for capturing additional risk details.
+    start_date:  (Start Date) The date when the risk was first recorded or became active.
+    end_date:  (End Date) The date when the risk was resolved, mitigated, or deactivated.
+    risk_extra_textarea:  (Long Text) Additional text area for extended risk-related notes or descriptions.
+    fraud_related:  (Fraud Related) Indicator specifying whether the risk is associated with fraud (flag indicating is a risk is fraud related where 'yes' means fraud and 'no' indicate non-fraud risks).
+    risk_new_textarea:  (Long Text) New text area for capturing extended risk details.
+    risk_auxiliary_textarea:  (Long Text) Auxiliary text area for supplementary risk-related content.
+    is_the_risk_time_bound?:  (Is the Risk Time Bound?) Specifies whether the risk is time-sensitive or has a defined timeframe.
+    duration:  (Duration) Length of time for which the risk is expected to be relevant or active.
+    risk_mitigation_strategy_responsibility_v1:  (Risk Mitigation Strategy Responsibility) Entity or individual responsible for implementing the risk mitigation strategy.
+    risk_subsidiary_textarea:  (Long Text) Details related to how the risk affects subsidiary entities within the organization.
+    risk_mitigation_strategy_effectiveness:  (Risk Mitigation Strategy Effectiveness) Assessment of how effective the risk mitigation strategy has been.
+    additional_mega_process:  (Mega Process) Additional high-level business processes affected by the risk.
+    risk_mitigation_timeline:  (Mitigation Timeline) Expected timeline for implementing risk mitigation measures. The status flag indicating mitigation timelines of differenet risks. its values are 
+                               "Ongoing" which indicates that risk mitigation efforts are currently in progress and have no defined end date yet; "Open Timeline" indicates the risk mitigation efforts have
+                                not been intiatated yet;
+    additional_major_process:  (Major Process) Additional sub-processes related to the risk.
+    additional_designation:  (Designation 1) Additional roles or positions responsible for managing the risk.
+    key_risk:  (Key Risk) Indicator flagging whether this risk is considered a key or high-priority risk.
+    risk_extra_user_list:  (People - Multi Select) List of users associated with monitoring or managing the risk.
+    top_risk:  (Top Risk) Indicator specifying whether the risk is one of the top risks in the organization; yes indicate it is a top risk; 'No' not top risk.
+    risk_auxiliary_user_list:  (People - Multi Select) Additional users assigned to assist in risk mitigation efforts.
+    risk_appetite:  (Risk Appetite) Defined risk tolerance level for this specific risk.
+    risk_new_user_list:  (People - Multi Select) Additional list of users associated with the risk.
+    audit_outcome_score:  (Audit Outcome Score) Score assigned based on the audit findings related to this risk.
+    strategy_level2:  (Strategy Level2) Second-level strategic classification of the risk.
+    risk_within_appetite:  (Risk Within Appetite) Indicator showing whether the risk falls within acceptable tolerance levels.
+    risk_additional_user_list:  (People - Multi Select) Additional list of users responsible for tracking or mitigating the risk.
+    risk_objective_level1:  (Objective Level 1) High-level business objective that the risk affects.
+    risk_outcome_score:  (Risk Outcome Score) Score representing the likelihood and impact of the risk outcome.
+    strategy_level3:  (Strategy Level3) Third-level strategic classification of the risk.
+    risk_mitigation_required:  (Risk Mitigation Required) Indicator specifying whether mitigation measures are necessary.
+    risk_extra_dropdown:  (Dropdown - Single Select) Additional dropdown field for risk classification or categorization.
+    risk_objective_level2:  (Objective Level 2) Second-level business objective impacted by the risk.
+    initial_risk_outcome:  (Initial Risk Outcome) Expected risk outcome before any mitigation measures are implemented.
+    strategy_level4:  (Strategy Level4) Fourth-level strategic classification of the risk.
+    risk_additional_dropdown:  (Dropdown - Single Select) Additional dropdown field for further risk classification.
+    risk_objective_level3:  (Objective Level 3) Third-level business objective affected by the risk.
+    risk_response:  (Risk Response) Chosen response strategy for managing the risk (e.g., Avoid, Mitigate, Transfer, Accept).
+    risk_new_dropdown:  (Dropdown - Single Select) New dropdown field for categorizing or classifying the risk.
+    risk_objective_level4:  (Objective Level 4) Fourth-level business objective affected by the risk.
+    audit_outcome:  (Audit Outcome) Summary of audit findings related to the risk.
+    risk_mitigation_strategy:  (Risk Mitigation Strategy) Strategy adopted to reduce the likelihood or impact of the risk.
+    risk_auxiliary_dropdown:  (Dropdown - Multi Select) Additional dropdown field for supplementary risk classification.
+    risk_objective_level5:  (Objective Level 5) Fifth-level business objective related to the risk.
+    previous_audit_outcome:  (Previous Audit Outcome) Outcome of the last audit conducted on this risk.
+    consequence:  (Consequence) The potential impact or result if the risk materializes.
+    risk_subsidiary_dropdown:  (Dropdown - Multi Select) Dropdown field to categorize risks based on subsidiary entities or divisions.
+    risk_objective_level6:  (Objective Level 6) Sixth-level business objective impacted by the risk.
+    risk_source:  (Risk Source) The origin of the risk (e.g., internal process failure, external threats, regulatory changes).
+    extra_dropdown_risk:  (Extra Dropdown Risk) Additional dropdown field for classifying or categorizing the risk.
+    generic_tag:  (Generic Tag) General tag used for grouping similar risks for reporting or analysis.
+    additional_dropdown_risk:  (Dropdown - Single Select 1) Additional field for classifying risk based on custom organizational categories.
+    clause:  (Clause) Specific contractual, legal, or regulatory clause related to the risk.
+    new_dropdown_risk:  (New Dropdown Risk) Newly introduced dropdown for risk classification.
+    generic_type:  (Generic Type) General category or classification type assigned to the risk.
+    fiscal_year:  (Fiscal Year) The financial year in which the risk was identified or assessed.
+    domain:  (Domain) The business domain or industry sector to which the risk applies.
+    additional_datefield1:  (Date 1) Custom date field for tracking risk-related events.
+    additional_datefield2:  (Date 2) Another custom date field for risk-related tracking.
+    additional_datefield3:  (Date 3) Third custom date field used for risk management purposes.
+    risk_category2:  (Category 2) Second-level classification of the risk based on predefined categories.
+    additional_datefield4:  (Date 4) Fourth custom date field for tracking risk-related timelines.
+    risk_category3:  (Category 3) Third-level risk classification for further categorization.
+    additional_datefield5:  (Date 5) Fifth custom date field for risk assessment or mitigation tracking.
+    risk_category4:  (Category 4) Fourth-level risk classification for deeper analysis.
+    additional_department:  (Additional Department) Additional department responsible for monitoring or managing the risk.
+    branch_level1:  (Branch Level 1) First-level business branch or unit affected by the risk.
+    mega_process_description:  (Mega Process Description) Detailed description of the high-level business process related to the risk.
+    branch_level2:  (Branch Level 2) Second-level business branch or operational unit impacted by the risk.
+    major_process_description:  (Major Process Description) Explanation of the specific major business process affected by the risk.
+    branch_level3:  (Branch Level 3) Third-level categorization of the affected business branch.
+    branch_level4:  (Branch Level 4) Fourth-level classification of the business branch related to the risk.
+    topic_level1:  (Topic Level 1) High-level topic or theme under which the risk falls.
+    topic_level2:  (Topic Level 2) Second-level categorization of the risk topic.
+    topic_level3:  (Topic Level 3) Third-level classification of the risk-related topic.
+    topic_level4:  (Topic Level 4) Fourth-level classification for risk grouping under specific topics.
+    procedure_level1:  (Procedure Level 1) First-level business procedure related to risk management.
+    procedure_level2:  (Procedure Level 2) Second-level breakdown of the procedure relevant to the risk.
+    procedure_level3:  (Procedure Level 3) Third-level categorization of the procedure linked to the risk.
+    procedure_level4:  (Procedure Level 4) Fourth-level classification of the procedure in relation to the risk.
+    business_plan:  (Business Plan) The organizationâ€™s business plan that the risk could impact.
+    risk_plan_v1:  (Risk Plan) The mitigation or response plan designed to manage the risk.
+    risk_effectiveness:  (Risk Effectiveness) Qualitative assessment of how effective the risk mitigation measures are.
+    risk_effectiveness_percentage:  (Risk Effectiveness Percentage) Quantitative measure (percentage) of risk mitigation effectiveness.
+    comments:  (Comments) Additional remarks or observations related to the risk assessment.
+    risk_additional_textarea:  (Risk Additional Textarea) Extra text area for storing additional information regarding the risk.
+Relation: 
+    ACTION_TYPE_LOOKUP: source, source_object_id
+    IMR_LOOKUP:  risk_id
+    IR_LOOKUP: risk_id
+    MPR_LOOKUP: risk_id
+    RC_LOOKUP: risk_id
+    RKRI_LOOKUP: risk_id
+    RR_LOOKUP: risk_id
+    WP_SOURCE_LOOKUP: source,risk_id
+    RU_RCM: risk_id
+
+
+Table: RKRI_LOOKUP
+Description: A lookup table that links risks ids to their associated Key Risk Indicators (KRIs) for continuous risk monitoring and assessment
+Columns:
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+    kri_id:  (KRI ID) Unique reference code assigned to the Key Risk Indicator.
+Relation:
+    RISK_UNIVERSE_MAIN: risk_id
+    RU_RCM: risk_id
+    KRI_MAIN: kri_id
+
+
+Table: RP_AO_LOOKUP
+Description: A lookup table that links risk programs ids with audits ids, linking audit findings to specific risk management initiatives
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    audit_id:  (Audit ID) Unique identifier for each audit.
+Relation:
+    RISK_PROGRAM: risk_program_id
+    AUDIT_OBSERVATIONS: audit_id
+
+
+Table: RP_RPO_LOOKUP
+Description: A lookup table that links risk programs to their associated observations, facilitating tracking and management of identified risks
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    observation_id:  (Observation ID) Unique identifier for each audit/risk observations.
+Relation:
+    RISK_PROGRAM: risk_program_id
+    RISK_PROGRAM_OBSERVATIONS : observation_id
+
+
+Table: RP_RP_LOOKUP
+Description: A lookup table that links a risk programs and risk plans, ensuring alignment between risk management strategies and program execution
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    plan_id:  (Plan ID) Unique identifier for a specific risk management plan.
+Relation:
+    RISK_PROGRAM: risk_program_id
+    RISK_PLAN: plan_id
+
+
+Table: RP_RS_LOOKUP
+Description: A lookup table that links risk programs with their scheduled activities, ensuring proper tracking and execution of risk management tasks
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    activity_id:  (Sub Activity ID) Unique identifier for a scheduled risk management activity.
+Relation:
+    RISK_PROGRAM : risk_program_id
+    RISK_SCHEDULE : activity_id
+
+
+Table: RP_WP_LOOKUP
+Description: A lookup table that links risk programs to their associated working papers, maintaining documentation for risk assessment and compliance
+Columns:
+    risk_program_id:  (Program ID) Unique identifier for a specific risk program.
+    working_paper_id:  (Working Paper) Unique identifier for each working paper entry.
+Relation:
+    RISK_PROGRAM: risk_program_id
+    WORKING_PAPER: working_paper_id
+
+
+Table: RR_LOOKUP
+Description: A lookup table that links risks to their respective risk registers, ensuring proper documentation and tracking within risk management frameworks
+Columns:
+    risk_id:  (Risk ID) Unique risk identifier assigned to each risk entry.
+    register_id:  (Register ID) Unique identifier for the risk register entry.
+Relation: 
+    RISK_REGISTER: register_id
+    RISK_UNIVERSE_MAIN: risk_id
+    RU_RCM: risk_id
+
+
+Table: RU_RCM
+Description: RCM or risk control matrix is a tool used by auditors to evaluate and assess the effectiveness of an organization's internal controls. It helps auditors identify, assess, and manage risks by mapping them to specific control activities, ensuring that controls are designed and operating effectively. Table captures the relationship between business risks, and their controls within an organization.
+ This table serves as the operational foundation for managing internal controls by providing a systematic framework to ensure all process risks are adequately controlled and monitored.
+Columns:
+    risk_id:  (Risk ID) Unique identifier for each risk. Links to the main risk universe.
+    risk_object_id:  (Risk Object ID) System-generated unique identifier for risk objects, ensuring traceability.
+    risk_name:  (Risk Title) The name/title of the identified risk, summarizing its nature.
+    risk_created_by:  (Created by) The user who originally documented or created the risk entry.
+    risk_plan_v1:  (Risk Plan) The initial version of the risk plan, outlining the risk management approach.
+    risk_manager:  (Risk Manager) The individual responsible for overseeing and managing the risk.
+    risk_owner:  (Risk Owner) The name or initial of the person accountable for addressing and mitigating the risk.
+    risk_description:  (Risk Description) A detailed explanation of the risk, its impact, and its relevance to the organization.
+    risk_scoring_model:  (Scoring Model) The methodology used for assessing and scoring the risk.
+    risk_approval_status:  (Approval Status) The current status of risk approval (e.g., Pending, Approved, Rejected).
+    risk_type:  (Risk Type) Categorization of the risk (e.g., Financial, Operational, Compliance).
+    risk_inherent_likelihood:  (Inherent Likelihood) The probability of the risk occurring before any mitigation measures are applied.
+    risk_residual_likelihood:  (Residual Likelihood) The probability of the risk occurring after mitigation controls are implemented.
+    risk_residual_impact:  (Residual Impact) The expected impact level of the risk after mitigation actions are in place.
+    risk_inherent_impact:  (Inherent Impact) The potential impact level of the risk before any mitigation efforts.
+    target_residual_risk:  (Target Residual Risk) The acceptable level of residual risk after applying controls.
+    risk_inherent_score:  (Inherent Score) The calculated risk score based on inherent impact and likelihood.
+    risk_residual_score:  (Residual Score) The calculated risk score based on residual impact and likelihood.
+    inherent_risk_rating:  (Inherent Risk Rating) The qualitative rating (e.g., Low, Medium, High) based on the inherent risk score.
+    residual_risk_rating:  (Residual Risk Rating) The qualitative rating after mitigation controls are applied.
+    risk_velocity:  (Risk Velocity) The speed at which the risk can materialize and impact the organization.
+    risk_vulnerability:  (Vulnerability) The level of exposure the organization has to this risk.
+    risk_multi_entity:  (Entity) Identifies if the risk affects multiple entities within the organization.
+    risk_functions:  (Functions) The functional areas impacted by the risk (e.g., Finance, Operations).
+    risk_department_level1:  (Department Level 1) The primary department responsible for managing the risk.
+    risk_department_level2:  (Department Level 2) The sub-department handling specific aspects of the risk.
+    risk_category1:  (Category1) The first-level risk categorization based on organizational classification.
+    risk_business_strategy:  (Strategy) The alignment of the risk with business strategies and objectives.
+    risk_approved_on:  (Approved On) The date when the risk was officially approved.
+    risk_approved_by:  (Approved By) The person who approved the risk assessment and mitigation plan.
+    risk_stage:  (Stage) The current stage of the risk (e.g., Identified, Evaluated, Mitigated).
+    risk_decision_maker_v1:  (Decision Maker V1) The key decision-maker responsible for approving risk responses.
+    risk_review_date:  (Review Date) The scheduled date for reviewing and reassessing the risk.
+    risk_identifier:  (Risk Identifier) A unique identifier or tag assigned to track the risk across reports.
+    status:  (Status) The current operational status of the risk (e.g., Open, Closed, In Progress).
+    risk_fraud_related:  (Fraud Related) Indicates if the risk is linked to fraud-related concerns.
+    risk_mitigation_timeline:  (Mitigation Timeline) The expected timeline for implementing risk mitigation measures. The status flag indicating mitigation timelines of differenet risks. its values are 
+                               "Ongoing" which indicates that risk mitigation efforts are currently in progress and have no defined end date yet; "Open Timeline" indicates the risk mitigation efforts have
+                                not been intiatated yet;
+    key_risk:  (Key Risk) Identifies whether the risk is classified as a key risk for the organization.
+    top_risk:  (Top Risk) Indicates if the risk is among the organization's top priority risks.
+    risk_appetite:  (Risk Appetite) The organization's tolerance level for this specific risk.
+    risk_outcome_score:  (Risk Outcome Score) The effectiveness score of mitigation efforts on reducing the risk.
+    risk_within_appetite:  (Risk Within Appetite) Determines if the risk is within the acceptable risk appetite.
+    risk_mitigation_required:  (Risk Mitigation Required) Specifies if mitigation actions are required for this risk.
+    risk_extra_textarea:  (Long Text) Additional notes or explanations related to the risk.
+    risk_generic_tag:  (Generic Tag) Generic tags assigned to the risk for classification or grouping.
+    risk_clause:  (Clause) Specific regulatory or compliance clauses related to the risk.
+    risk_fiscal_year:  (Fiscal Year) The fiscal year in which the risk was recorded or evaluated.
+    control_id:  (Control ID) Unique identifier for the control linked to the risk.
+    control_object_id:  (Control Object ID) System-generated identifier for the control object.
+    control_name:  (Control Name) The title or name of the control applied to mitigate the risk.
+    control_type:  (Control Type) The category of control (e.g., Preventive, Detective, Corrective).
+    control_rating:  (Control Rating) Assessment rating of the controlâ€™s effectiveness.
+    control_category:  (Control Category) Classification of the control based on risk management frameworks.
+    control_frequency:  (Control Frequency) How often the control is executed (e.g., Daily, Weekly, Annually).
+    control_automation:  (Control Automation) Specifies if the control is manual or automated.
+    key_control:  (Key Control) Identifies if the control is a key control for mitigating critical risks.
+    control_description:  (Control Description) Detailed explanation of the control and how it mitigates the risk.
+    control_score:  (Score) Numerical rating assigned to the effectiveness of the control.
+    control_multi_entity:  (Entity) Indicates if the control applies across multiple business entities.
+    control_functions:  (Functions) The functional areas responsible for implementing the control.
+    control_department_level1:  (Department Level 1) The primary department responsible for executing the control.
+    control_department_level2:  (Department Level 2) The sub-department managing the controlâ€™s operations.
+    control_sector:  (Sector) The business sector where the control is implemented.
+    control_regions:  (Regions) The geographical regions where the control applies.
+    control_impact:  (Impact) The expected impact of the control on mitigating risk.
+    control_manager:  (Control Manager) The individual overseeing the controlâ€™s execution.
+    process:  (Process) The business process where the control is integrated.
+    conrol_owner:  (Control Owner) The person responsible for ensuring the control is maintained.
+    control_likelihood:  (Likelihood) The probability of risk occurrence after the control is applied.
+    control_testing_description:  (Testing Description) Details of how the control is tested for effectiveness.
+    control_custom_id:  (Control Custom ID) A custom identifier for tracking control elements.
+    control_ease_of_implementation:  (Ease of Implementation) The level of difficulty in implementing the control.
+    control_ease_of_maintain:  (Ease of Maintain) The level of difficulty in maintaining the control over time.
+    control_cost_to_implement_maintain:  (Cost to Implement Maintain) The financial cost associated with control implementation and upkeep.
+    control_audit_rating:  (Rating) The control's rating based on audit assessments.
+    control_design_evaluation:  (Control Design Evaluation) The effectiveness evaluation of the controlâ€™s design.
+    control_fiscal_year:  (Fiscal Year) The fiscal year in which the control was assessed or implemented.
+    control_generic_tag:  (Generic Tag) Generic tags used to categorize the control.
+    control_clause:  (Clause) Specific regulatory clauses the control aligns with.
+Relation:
+    RKRI_LOOKUP: risk_id
+    RR_LOOKUP: risk_id
+    CM_CP_LOOKUP: control_id
+    IMR_LOOKUP: risk_id
+    IR_LOOKUP: risk_id
+    MPR_LOOKUP: risk_id
+    RC_LOOKUP: risk_id
+    WP_SOURCE_LOOKUP: risk_id, control_id
+    RISK_UNIVERSE_MAIN: risk_id
+    RU_RCM: control_id
+    CONTROL_MOVEMENT: control_id 
+
+
+Table: SCORE
+Description: The table stores scores for performance tracking of key risk indicators. This table serves as the measurement framework for monitoring kris against predefined thresholds, enabling proactive risk management through systematic tracking of key risk indicator performance and trend analysis. 
+Columns:
+    score_id:  (Score ID) Unique identifier for each risk score entry.
+    date:  (Date) Date when the score was recorded.
+    value:  (Value) Numerical risk score assigned to an entity or process.
+    rating:  (Rating) Risk classification (Low, Medium, High) based on score value.
+    threshold:  (Threshold) Indicates if the score is Below, Within, or Above the acceptable range.
+    trend:  (Trend) Risk trajectory over time (On Track, Off Track, No Change).
+    due_date:  (Due Date) Deadline for reviewing or addressing the risk.
+    created_date:  (Created Date) Timestamp when the score entry was created.
+    updated_by:  (Updated By) Name of the user who last updated the entry.
+    modified_date:  (Modified Date) Timestamp of the last modification.
+    attachment:  (Attachment) Indicates whether supporting documents are attached (0 = No).
+    comments:  (Comments) Additional notes or observations about the risk assessment.
+Relation: 
+    KRI_SCORE_LOOKUP: score_id
